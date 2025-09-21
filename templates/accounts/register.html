@@ -53,13 +53,23 @@
     .form-input:focus~label, .form-input:not(:placeholder-shown)~label{
       top:0; font-size:.875rem; color:#2E7D32;
     }
+
+    .loading-bar{
+      position:absolute; top:0; left:0; right:0; height:4px; background:#A5D6A7;
+      overflow:hidden; border-radius:16px 16px 0 0;
+    }
+    .loading-bar::before{
+      content:''; position:absolute; inset:0 0 0 0; width:50%; background:#2E7D32;
+      animation:loading 1.5s infinite linear;
+    }
+    @keyframes loading{ from{transform:translateX(-100%);} to{transform:translateX(200%);} }
   </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark font-display flex items-center justify-center min-h-screen p-4">
   <div class="w-full max-w-5xl mx-auto">
     <!-- Header -->
     <div class="flex flex-col items-center justify-center mb-8">
-      <div class="w-24 h-24 bg-primary-light dark:bg-primary-dark rounded-full flex items-center justify-center mb-4 shadow">
+      <div class="w-24 h-24 bg-primary-light dark:bg-primary-dark rounded-full flex items-center justify-center mb-4 shadow-soft-subtle">
         <span class="material-symbols-outlined text-5xl text-white">menu_book</span>
       </div>
       <h1 id="form-title" class="text-4xl font-black tracking-tight">إنشاء حساب جديد</h1>
@@ -67,12 +77,12 @@
     </div>
 
     <!-- Card -->
-    <div id="registration-card" class="bg-surface-light dark:bg-surface-dark p-8 sm:p-10 rounded-xl shadow relative overflow-hidden">
+    <div id="registration-card" class="bg-surface-light dark:bg-surface-dark p-8 sm:p-10 rounded-xl shadow-soft-medium relative overflow-hidden">
       <!-- Role selector -->
       <div class="mb-8">
         <p class="text-center font-bold text-lg mb-4">اختر نوع الحساب:</p>
         <div id="role-selector" class="flex border border-border-light dark:border-border-dark rounded-lg p-1 max-w-sm mx-auto bg-gray-100 dark:bg-gray-800">
-          <button type="button" data-role="student" class="w-1/2 py-2.5 px-4 rounded-md text-center bg-primary text-white shadow font-bold text-base">طالب</button>
+          <button type="button" data-role="student" class="w-1/2 py-2.5 px-4 rounded-md text-center bg-primary text-white shadow-md font-bold text-base">طالب</button>
           <button type="button" data-role="teacher" class="w-1/2 py-2.5 px-4 rounded-md text-center text-text-muted-light dark:text-text-muted-dark transition-all duration-300 font-bold text-base">معلم</button>
         </div>
       </div>
@@ -82,10 +92,9 @@
 
         <input type="hidden" name="role" id="register-role" value="student" />
 
-        <!-- grid الرئيسي -->
+        <!-- توحيد المسافات: gap-y-6 على الموبايل و md:gap-y-8 على الديسكتوب -->
         <div class="grid grid-cols-1 md:grid-cols-2 md:gap-x-8 gap-y-6 md:gap-y-8">
 
-          <!-- ثابتة لكل الأدوار -->
           <div class="form-input-group">
             <input id="username" name="username" type="text" placeholder="اسم المستخدم" required
                    class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary placeholder-transparent text-lg"/>
@@ -121,87 +130,90 @@
             <label for="password2">تأكيد كلمة المرور <span class="text-error">*</span></label>
           </div>
 
-          <!-- حقول المعلم (داخل خلية واحدة من grid) -->
-          <div data-role-fields="teacher" class="hidden">
-            <div class="form-input-group md:col-span-2">
-              <input id="institution" name="institution" type="text" placeholder="المؤسسة / الجهة (اختياري)"
-                     class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary placeholder-transparent text-lg"/>
-              <label for="institution">المؤسسة / الجهة (اختياري)</label>
-            </div>
+          <!-- هنا: لا نستخدم contents على الحاوية العامة -->
+          <div id="role-specific-fields">
 
-            <div class="form-input-group md:col-span-2">
-              <textarea id="bio" name="bio" rows="3" placeholder="نبذة قصيرة (اختياري)"
-                        class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary placeholder-transparent text-lg"></textarea>
-              <label for="bio">نبذة قصيرة (اختياري)</label>
-            </div>
+            <!-- المعلم: يبدأ مخفي بلا أي display utilities أخرى -->
+            <div data-role-fields="teacher" class="hidden">
+              <div class="form-input-group md:col-span-2">
+                <input id="institution" name="institution" type="text" placeholder="المؤسسة / الجهة (اختياري)"
+                       class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary placeholder-transparent text-lg"/>
+                <label for="institution">المؤسسة / الجهة (اختياري)</label>
+              </div>
 
-            <div class="md:col-span-2">
-              <label for="certificate" class="block text-base font-medium text-text-muted-light dark:text-text-muted-dark mb-2">إرفاق شهادة أو إجازة (اختياري)</label>
-              <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-border-light dark:border-border-dark border-dashed rounded-lg bg-background-light dark:bg-gray-800/50">
-                <div class="space-y-1 text-center">
-                  <span class="material-symbols-outlined text-5xl text-gray-400">cloud_upload</span>
-                  <div class="flex text-base text-gray-600 dark:text-gray-400">
-                    <label for="certificate" class="relative cursor-pointer bg-transparent rounded-md font-medium text-primary hover:text-primary-dark focus-within:outline-none">
-                      <span>اختر ملفًا</span>
-                      <input id="certificate" name="certificate" type="file" accept=".pdf,.png,.jpg,.jpeg" class="sr-only"/>
-                    </label>
-                    <p class="pr-1">أو اسحبه وأفلته هنا</p>
+              <div class="form-input-group md:col-span-2">
+                <textarea id="bio" name="bio" rows="3" placeholder="نبذة قصيرة (اختياري)"
+                          class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary placeholder-transparent text-lg"></textarea>
+                <label for="bio">نبذة قصيرة (اختياري)</label>
+              </div>
+
+              <div class="md:col-span-2">
+                <label for="certificate" class="block text-base font-medium text-text-muted-light dark:text-text-muted-dark mb-2">إرفاق شهادة أو إجازة (اختياري)</label>
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-border-light dark:border-border-dark border-dashed rounded-lg bg-background-light dark:bg-gray-800/50">
+                  <div class="space-y-1 text-center">
+                    <span class="material-symbols-outlined text-5xl text-gray-400">cloud_upload</span>
+                    <div class="flex text-base text-gray-600 dark:text-gray-400">
+                      <label for="certificate" class="relative cursor-pointer bg-transparent rounded-md font-medium text-primary hover:text-primary-dark focus-within:outline-none">
+                        <span>اختر ملفًا</span>
+                        <input id="certificate" name="certificate" type="file" accept=".pdf,.png,.jpg,.jpeg" class="sr-only"/>
+                      </label>
+                      <p class="pr-1">أو اسحبه وأفلته هنا</p>
+                    </div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">PDF, PNG, JPG بحجم لا يتجاوز 5MB</p>
                   </div>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">PDF, PNG, JPG بحجم لا يتجاوز 5MB</p>
+                </div>
+                <div id="file-info" class="mt-2 text-base text-text-muted-light dark:text-text-muted-dark hidden">
+                  <span class="font-medium">الملف المختار:</span> <span id="file-name"></span>
                 </div>
               </div>
-              <div id="file-info" class="mt-2 text-base text-text-muted-light dark:text-text-muted-dark hidden">
-                <span class="font-medium">الملف المختار:</span> <span id="file-name"></span>
+            </div>
+
+            <!-- الطالب: يبدأ ظاهر ويأخذ contents حتى تصبح الحقول أخوة داخل grid -->
+            <div data-role-fields="student" class="contents">
+              <div class="form-input-group">
+                <input id="birth_date" name="birth_date" type="text" placeholder="تاريخ الميلاد" 
+                       onfocus="(this.type='date')" onblur="(this.type='text')"
+                       class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary placeholder-transparent text-lg"/>
+                <label for="birth_date">تاريخ الميلاد</label>
+              </div>
+
+              <div class="form-input-group">
+                <select id="gender" name="gender"
+                        class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary text-lg">
+                  <option value="" selected hidden disabled></option>
+                  <option value="male">ذكر</option>
+                  <option value="female">أنثى</option>
+                </select>
+                <label for="gender">الجنس</label>
+              </div>
+
+              <div class="form-input-group md:col-span-2">
+                <input id="guardian_phone" name="guardian_phone" type="tel" placeholder="رقم جوال ولي الأمر (اختياري)"
+                       class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary placeholder-transparent text-lg"/>
+                <label for="guardian_phone">رقم جوال ولي الأمر (اختياري)</label>
+              </div>
+
+              <!-- اختيار الحلقة: يمتد للصف بالكامل -->
+              <div class="form-input-group col-span-2 md:col-span-2">
+                <select id="halaqa" name="halaqa"
+                        class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary text-lg">
+                  <option value="" selected hidden disabled></option>
+                  <option>حلقة البقرة – الشيخ عبد الله الحربي</option>
+                  <option>حلقة النساء – الشيخ محمد القحطاني</option>
+                  <option>حلقة التوبة – الشيخ خالد الغامدي</option>
+                  <option>حلقة النحل – الشيخ فهد العتيبي</option>
+                  <option>حلقة الإسراء – الشيخ محمود الأنصاري</option>
+                  <option>حلقة طه – الشيخ علي الزهراني</option>
+                  <option>حلقة النمل – الشيخ ياسر البكري</option>
+                  <option>حلقة العنكبوت – الشيخ عبد الرحمن الزهراني</option>
+                  <option>حلقة لقمان – الشيخ إبراهيم السبيعي</option>
+                  <option>حلقة فاطر – الشيخ عمر الحربي</option>
+                </select>
+                <label for="halaqa">اختيار الحلقة</label>
               </div>
             </div>
           </div>
 
-          <!-- حقول الطالب (داخل خلية واحدة من grid) -->
-          <div data-role-fields="student">
-            <div class="form-input-group">
-              <input id="birth_date" name="birth_date" type="text" placeholder="تاريخ الميلاد" 
-                     onfocus="(this.type='date')" onblur="(this.type='text')"
-                     class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary placeholder-transparent text-lg"/>
-              <label for="birth_date">تاريخ الميلاد</label>
-            </div>
-
-            <div class="form-input-group">
-              <select id="gender" name="gender"
-                      class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary text-lg">
-                <option value="" selected hidden disabled></option>
-                <option value="male">ذكر</option>
-                <option value="female">أنثى</option>
-              </select>
-              <label for="gender">الجنس</label>
-            </div>
-
-            <div class="form-input-group md:col-span-2">
-              <input id="guardian_phone" name="guardian_phone" type="tel" placeholder="رقم جوال ولي الأمر (اختياري)"
-                     class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary placeholder-transparent text-lg"/>
-              <label for="guardian_phone">رقم جوال ولي الأمر (اختياري)</label>
-            </div>
-          </div>
-
-          <!-- اختيار الحلقة: أخ داخل الـ grid الرئيسي (يمتد لآخر الصف) ويظهر فقط للطالب -->
-          <div id="halaqa-row" class="form-input-group col-span-2 md:col-span-2">
-            <select id="halaqa" name="halaqa"
-                    class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary text-lg">
-              <option value="" selected hidden disabled></option>
-              <option>حلقة البقرة – الشيخ عبد الله الحربي</option>
-              <option>حلقة النساء – الشيخ محمد القحطاني</option>
-              <option>حلقة التوبة – الشيخ خالد الغامدي</option>
-              <option>حلقة النحل – الشيخ فهد العتيبي</option>
-              <option>حلقة الإسراء – الشيخ محمود الأنصاري</option>
-              <option>حلقة طه – الشيخ علي الزهراني</option>
-              <option>حلقة النمل – الشيخ ياسر البكري</option>
-              <option>حلقة العنكبوت – الشيخ عبد الرحمن الزهراني</option>
-              <option>حلقة لقمان – الشيخ إبراهيم السبيعي</option>
-              <option>حلقة فاطر – الشيخ عمر الحربي</option>
-            </select>
-            <label for="halaqa">اختيار الحلقة</label>
-          </div>
-
-          <!-- الشروط -->
           <div class="flex items-start md:col-span-2 mt-2">
             <div class="flex items-center h-5">
               <input id="terms" name="terms" type="checkbox" required
@@ -231,7 +243,7 @@
 
         <div class="mt-10">
           <button id="submit-button" type="submit"
-                  class="w-full flex justify-center items-center py-4 px-4 border border-transparent rounded-lg shadow text-xl font-bold text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                  class="w-full flex justify-center items-center py-4 px-4 border border-transparent rounded-lg shadow-md text-xl font-bold text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
             إنشاء الحساب
           </button>
         </div>
@@ -248,7 +260,7 @@
 
   <!-- مودال الشروط -->
   <div id="terms-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-50 backdrop-blur-sm">
-    <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 sm:p-8">
+    <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-soft-medium max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 sm:p-8">
       <div class="flex justify-between items-center border-b pb-4 border-border-light dark:border-border-dark">
         <h2 class="text-2xl font-bold">الشروط والأحكام</h2>
         <button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" onclick="document.getElementById('terms-modal').classList.add('hidden');">
@@ -259,7 +271,7 @@
         <p>هذا نص تجريبي…</p>
       </div>
       <div class="mt-8 text-left">
-        <button class="py-2.5 px-6 border border-transparent rounded-lg shadow text-base font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" onclick="document.getElementById('terms-modal').classList.add('hidden');">
+        <button class="py-2.5 px-6 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" onclick="document.getElementById('terms-modal').classList.add('hidden');">
           أوافق
         </button>
       </div>
@@ -273,34 +285,38 @@
     const roleButtons  = roleSelector.querySelectorAll('button');
     const roleInput    = document.getElementById('register-role');
 
+    // مراجع الحاويتين
     const teacherWrap  = document.querySelector('[data-role-fields="teacher"]');
     const studentWrap  = document.querySelector('[data-role-fields="student"]');
-    const halaqaRow    = document.getElementById('halaqa-row');
 
     function setRole(role){
       const isTeacher = role === 'teacher';
       roleInput.value = role;
 
-      // تفعيل أزرار النوع
+      // تبديل أزرار النوع
       roleButtons.forEach(btn=>{
         const on = btn.dataset.role===role;
         btn.classList.toggle('bg-primary', on);
         btn.classList.toggle('text-white', on);
-        btn.classList.toggle('shadow', on);
+        btn.classList.toggle('shadow-md', on);
         btn.classList.toggle('text-text-muted-light', !on);
         btn.classList.toggle('dark:text-text-muted-dark', !on);
       });
 
-      // إظهار/إخفاء مجموعات الحقول
+      // إظهار/إخفاء الحقول + التحكم في display بحيث الظاهر فقط هو contents
       teacherWrap.classList.toggle('hidden', !isTeacher);
       studentWrap.classList.toggle('hidden',  isTeacher);
 
-      // إظهار/إخفاء اختيار الحلقة (طالب فقط)
-      halaqaRow.classList.toggle('hidden', isTeacher);
+      teacherWrap.classList.toggle('contents', isTeacher);
+      teacherWrap.classList.toggle('block',   !isTeacher);
 
-      document.getElementById('form-title').textContent    = isTeacher ? 'إنشاء حساب معلم' : 'إنشاء حساب طالب';
-      document.getElementById('form-subtitle').textContent = isTeacher ? 'أكمل بياناتك لتقديم طلب الانضمام كمعلم' : 'أكمل بياناتك للانضمام كطالب';
-      document.getElementById('submit-button').textContent = isTeacher ? 'إنشاء حساب معلم' : 'إنشاء حساب طالب';
+      studentWrap.classList.toggle('contents', !isTeacher);
+      studentWrap.classList.toggle('block',     isTeacher);
+
+      // عناوين وأزرار
+      document.getElementById('form-title').textContent     = isTeacher ? 'إنشاء حساب معلم' : 'إنشاء حساب طالب';
+      document.getElementById('form-subtitle').textContent  = isTeacher ? 'أكمل بياناتك لتقديم طلب الانضمام كمعلم' : 'أكمل بياناتك للانضمام كطالب';
+      document.getElementById('submit-button').textContent  = isTeacher ? 'إنشاء حساب معلم' : 'إنشاء حساب طالب';
     }
 
     roleButtons.forEach(btn => btn.addEventListener('click', ()=>setRole(btn.dataset.role)));
@@ -345,6 +361,17 @@
     }
     eyeButtons.forEach(btn => btn.addEventListener('click', ()=>setPasswordsVisible(!passwordsVisible)));
     setPasswordsVisible(false);
+
+    // عرض اسم الملف المرفوع (اختياري)
+    const certInput = document.getElementById('certificate');
+    if (certInput){
+      certInput.addEventListener('change', function(){
+        const f = this.files[0];
+        const info = document.getElementById('file-info');
+        const name = document.getElementById('file-name');
+        if (f){ info.classList.remove('hidden'); name.textContent = f.name; } else { info.classList.add('hidden'); }
+      });
+    }
   </script>
 </body>
 </html>
