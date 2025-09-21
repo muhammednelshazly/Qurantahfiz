@@ -52,6 +52,19 @@
       top:0; font-size:.875rem; color:#2E7D32;
     }
 
+    .form-select-floating { position: relative; }
+    .form-select-floating label{
+      position:absolute; right:1rem; top:-.7rem; transform:none !important;
+      padding:0 .4rem; font-size:.875rem; color:#2E7D32;
+      background-color:var(--label-bg, white);
+    }
+    .dark .form-select-floating label{ background-color:#1E1E1E; }
+    .form-select-floating select{ -webkit-appearance:none; -moz-appearance:none; appearance:none; padding-right:2.5rem; }
+    .form-select-floating .chevron{
+      position:absolute; right:1rem; top:50%; transform:translateY(-50%);
+      width:1.25rem; height:1.25rem; color:#9CA3AF; pointer-events:none;
+    }
+
     .loading-bar{
       position:absolute; top:0; left:0; right:0; height:4px; background:#A5D6A7;
       overflow:hidden; border-radius:16px 16px 0 0;
@@ -169,7 +182,7 @@
                 <label for="birth_date">تاريخ الميلاد</label>
               </div>
 
-              <div class="form-input-group">
+              <div class="form-select-floating">
                 <select id="gender" name="gender"
                         class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary text-lg">
                   <option value="" selected hidden disabled></option>
@@ -177,6 +190,9 @@
                   <option value="female">أنثى</option>
                 </select>
                 <label for="gender">الجنس</label>
+                <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.08 1.04l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+                </svg>
               </div>
 
               <div class="form-input-group md:col-span-2">
@@ -185,9 +201,7 @@
                 <label for="guardian_phone">رقم جوال ولي الأمر (اختياري)</label>
               </div>
 
-              <div class="form-input-group col-span-2 md:col-span-2">
-                <label for="halaqa" class="block mb-2">اختيار الحلقة</label>
-              
+              <div class="form-select-floating col-span-2 md:col-span-2">
                 <select id="halaqa" name="halaqa"
                         class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary text-lg">
                   <option value="" selected hidden disabled></option>
@@ -202,9 +216,12 @@
                   <option>حلقة لقمان – الشيخ إبراهيم السبيعي</option>
                   <option>حلقة فاطر – الشيخ عمر الحربي</option>
                 </select>
+                <label for="halaqa">اختيار الحلقة</label>
+                <svg class="chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 011.08 1.04l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+                </svg>
               </div>
 
-              </div>
             </div>
           </div>
 
