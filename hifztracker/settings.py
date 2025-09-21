@@ -6,10 +6,29 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
 
+# ======================= الأساسيات =======================
 SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-me')
-DEBUG = os.getenv('DEBUG', '1') == '1'
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
+# خليه 0 (أو False) في الإنتاج على Railway
+DEBUG = os.getenv('DEBUG', '0') in ('1', 'true', 'True')
+
+# الدومينات المسموح لها تخدم المشروع
+# في الإنتاج على Railway أضف: qurantahfiz-production.up.railway.app
+ALLOWED_HOSTS = os.getenv(
+    'ALLOWED_HOSTS',
+    'localhost,127.0.0.1,qurantahfiz-production.up.railway.app,.up.railway.app'
+).split(',')
+
+# لازم البروتوكول https في CSRF_TRUSTED_ORIGINS
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    'CSRF_TRUSTED_ORIGINS',
+    'https://qurantahfiz-production.up.railway.app,https://*.up.railway.app'
+).split(',')
+
+# مهم مع المنصات اللي ورا Proxy (Railway/Heroku)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# ======================= التطبيقات والوسطاء =======================
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -53,6 +72,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'hifztracker.wsgi.application'
 
+# ======================= قاعدة البيانات =======================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -60,6 +80,7 @@ DATABASES = {
     }
 }
 
+# ======================= كلمات المرور =======================
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -67,21 +88,21 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# ======================= اللغة والوقت =======================
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = os.getenv('TIME_ZONE', 'Africa/Cairo')
 USE_I18N = True
 USE_TZ = True
 
-# STATIC
+# ======================= الملفات الثابتة والميديا =======================
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# MEDIA (لرفع ملفات الشهادات)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# STORAGES: لازم نعرّف default + staticfiles في Django 5
+# Django 5 storages
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
@@ -95,9 +116,17 @@ STORAGES = {
     },
 }
 
+# ======================= إعدادات أمان الإنتاج =======================
+# نفّذها تلقائيًا لما DEBUG يكون False
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    # SameSite الافتراضي Lax كويس للفورمات العادية
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Auth redirects
+# ======================= Auth redirects =======================
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 LOGIN_URL = '/accounts/login/'
