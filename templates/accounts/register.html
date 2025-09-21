@@ -92,6 +92,7 @@
 
         <input type="hidden" name="role" id="register-role" value="student" />
 
+        <!-- توحيد المسافات: gap-y-6 على الموبايل و md:gap-y-8 على الديسكتوب -->
         <div class="grid grid-cols-1 md:grid-cols-2 md:gap-x-8 gap-y-6 md:gap-y-8">
 
           <div class="form-input-group">
@@ -129,8 +130,10 @@
             <label for="password2">تأكيد كلمة المرور <span class="text-error">*</span></label>
           </div>
 
-          <div id="role-specific-fields">
+          <!-- مهم: هذه الحاوية الآن contents لتدخل الحقول في الـ grid الرئيسي -->
+          <div id="role-specific-fields" class="contents">
 
+            <!-- المعلم: يبدأ مخفي -->
             <div data-role-fields="teacher" class="hidden">
               <div class="form-input-group md:col-span-2">
                 <input id="institution" name="institution" type="text" placeholder="المؤسسة / الجهة (اختياري)"
@@ -165,6 +168,7 @@
               </div>
             </div>
 
+            <!-- الطالب: يبدأ ظاهر كمحتوى داخل الـ grid -->
             <div data-role-fields="student" class="contents">
               <div class="form-input-group">
                 <input id="birth_date" name="birth_date" type="text" placeholder="تاريخ الميلاد" 
@@ -189,6 +193,7 @@
                 <label for="guardian_phone">رقم جوال ولي الأمر (اختياري)</label>
               </div>
 
+              <!-- اختيار الحلقة: يمتد للصف بالكامل -->
               <div class="form-input-group col-span-2 md:col-span-2">
                 <select id="halaqa" name="halaqa"
                         class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary text-lg">
@@ -227,6 +232,7 @@
           </div>
         </div>
 
+        <!-- رسائل Django -->
         {% if messages %}
           <div class="mt-6 space-y-2">
             {% for message in messages %}
@@ -252,6 +258,7 @@
     </div>
   </div>
 
+  <!-- مودال الشروط -->
   <div id="terms-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-50 backdrop-blur-sm">
     <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-soft-medium max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 sm:p-8">
       <div class="flex justify-between items-center border-b pb-4 border-border-light dark:border-border-dark">
@@ -294,6 +301,7 @@
         btn.classList.toggle('dark:text-text-muted-dark', !on);
       });
 
+      // اجعل الظاهر فقط هو الذي يملك display: contents
       teacherWrap.classList.toggle('hidden', !isTeacher);
       studentWrap.classList.toggle('hidden',  isTeacher);
 
@@ -303,14 +311,15 @@
       studentWrap.classList.toggle('contents', !isTeacher);
       studentWrap.classList.toggle('block',     isTeacher);
 
-      document.getElementById('form-title').textContent     = isTeacher ? 'إنشاء حساب معلم' : 'إنشاء حساب طالب';
-      document.getElementById('form-subtitle').textContent  = isTeacher ? 'أكمل بياناتك لتقديم طلب الانضمام كمعلم' : 'أكمل بياناتك للانضمام كطالب';
-      document.getElementById('submit-button').textContent  = isTeacher ? 'إنشاء حساب معلم' : 'إنشاء حساب طالب';
+      document.getElementById('form-title').textContent    = isTeacher ? 'إنشاء حساب معلم' : 'إنشاء حساب طالب';
+      document.getElementById('form-subtitle').textContent = isTeacher ? 'أكمل بياناتك لتقديم طلب الانضمام كمعلم' : 'أكمل بياناتك للانضمام كطالب';
+      document.getElementById('submit-button').textContent = isTeacher ? 'إنشاء حساب معلم' : 'إنشاء حساب طالب';
     }
 
     roleButtons.forEach(btn => btn.addEventListener('click', ()=>setRole(btn.dataset.role)));
     setRole('student'); // الافتراضي
 
+    // مؤشر قوة كلمة السر
     const passwordInput = document.getElementById('password1');
     const confirmInput  = document.getElementById('password2');
     const strengthBar   = document.getElementById('strength-bar');
