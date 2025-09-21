@@ -129,8 +129,8 @@
             <label for="password2">تأكيد كلمة المرور <span class="text-error">*</span></label>
           </div>
 
-          <div id="role-specific-fields" class="contents">
-            <div data-role-fields="teacher" class="contents hidden">
+          <div id="role-specific-fields" class="sm:block md:contents">
+            <div data-role-fields="teacher" class="sm:block md:contents hidden">
               <div class="form-input-group md:col-span-2">
                 <input id="institution" name="institution" type="text" placeholder="المؤسسة / الجهة (اختياري)"
                        class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary placeholder-transparent text-lg"/>
@@ -164,7 +164,7 @@
               </div>
             </div>
 
-            <div data-role-fields="student" class="contents">
+            <div data-role-fields="student" class="sm:block md:contents">
               <div class="form-input-group">
                 <input id="birth_date" name="birth_date" type="text" placeholder="تاريخ الميلاد" 
                        onfocus="(this.type='date')" onblur="(this.type='text')"
