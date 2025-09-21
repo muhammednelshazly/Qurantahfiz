@@ -92,7 +92,7 @@
 
         <input type="hidden" name="role" id="register-role" value="student" />
 
-        <div class="grid grid-cols-1 md:grid-cols-2 md:gap-x-8 gap-y-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 md:gap-x-8 gap-y-6 md:gap-y-8">
 
           <div class="form-input-group">
             <input id="username" name="username" type="text" placeholder="اسم المستخدم" required
@@ -129,8 +129,9 @@
             <label for="password2">تأكيد كلمة المرور <span class="text-error">*</span></label>
           </div>
 
-          <div id="role-specific-fields" class="sm:block md:contents">
-            <div data-role-fields="teacher" class="sm:block md:contents hidden">
+          <div id="role-specific-fields">
+
+            <div data-role-fields="teacher" class="hidden">
               <div class="form-input-group md:col-span-2">
                 <input id="institution" name="institution" type="text" placeholder="المؤسسة / الجهة (اختياري)"
                        class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary placeholder-transparent text-lg"/>
@@ -164,7 +165,7 @@
               </div>
             </div>
 
-            <div data-role-fields="student" class="sm:block md:contents">
+            <div data-role-fields="student" class="contents">
               <div class="form-input-group">
                 <input id="birth_date" name="birth_date" type="text" placeholder="تاريخ الميلاد" 
                        onfocus="(this.type='date')" onblur="(this.type='text')"
@@ -188,7 +189,6 @@
                 <label for="guardian_phone">رقم جوال ولي الأمر (اختياري)</label>
               </div>
 
-              <!-- التعديل هنا فقط -->
               <div class="form-input-group col-span-2 md:col-span-2">
                 <select id="halaqa" name="halaqa"
                         class="form-input w-full px-4 py-3.5 rounded-lg bg-transparent border-2 border-border-light dark:border-border-dark focus:outline-none focus:ring-0 focus:border-primary text-lg">
@@ -227,7 +227,6 @@
           </div>
         </div>
 
-        <!-- رسائل Django -->
         {% if messages %}
           <div class="mt-6 space-y-2">
             {% for message in messages %}
@@ -279,8 +278,13 @@
     const roleButtons  = roleSelector.querySelectorAll('button');
     const roleInput    = document.getElementById('register-role');
 
+    const teacherWrap  = document.querySelector('[data-role-fields="teacher"]');
+    const studentWrap  = document.querySelector('[data-role-fields="student"]');
+
     function setRole(role){
+      const isTeacher = role === 'teacher';
       roleInput.value = role;
+
       roleButtons.forEach(btn=>{
         const on = btn.dataset.role===role;
         btn.classList.toggle('bg-primary', on);
@@ -289,12 +293,21 @@
         btn.classList.toggle('text-text-muted-light', !on);
         btn.classList.toggle('dark:text-text-muted-dark', !on);
       });
-      document.querySelector('[data-role-fields="teacher"]').classList.toggle('hidden', role!=='teacher');
-      document.querySelector('[data-role-fields="student"]').classList.toggle('hidden', role!=='student');
-      document.getElementById('form-title').textContent = (role==='teacher') ? 'إنشاء حساب معلم' : 'إنشاء حساب طالب';
-      document.getElementById('form-subtitle').textContent = (role==='teacher') ? 'أكمل بياناتك لتقديم طلب الانضمام كمعلم' : 'أكمل بياناتك للانضمام كطالب';
-      document.getElementById('submit-button').textContent = (role==='teacher') ? 'إنشاء حساب معلم' : 'إنشاء حساب طالب';
+
+      teacherWrap.classList.toggle('hidden', !isTeacher);
+      studentWrap.classList.toggle('hidden',  isTeacher);
+
+      teacherWrap.classList.toggle('contents', isTeacher);
+      teacherWrap.classList.toggle('block',   !isTeacher);
+
+      studentWrap.classList.toggle('contents', !isTeacher);
+      studentWrap.classList.toggle('block',     isTeacher);
+
+      document.getElementById('form-title').textContent     = isTeacher ? 'إنشاء حساب معلم' : 'إنشاء حساب طالب';
+      document.getElementById('form-subtitle').textContent  = isTeacher ? 'أكمل بياناتك لتقديم طلب الانضمام كمعلم' : 'أكمل بياناتك للانضمام كطالب';
+      document.getElementById('submit-button').textContent  = isTeacher ? 'إنشاء حساب معلم' : 'إنشاء حساب طالب';
     }
+
     roleButtons.forEach(btn => btn.addEventListener('click', ()=>setRole(btn.dataset.role)));
     setRole('student'); // الافتراضي
 
